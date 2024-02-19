@@ -1,4 +1,4 @@
-name = "mesa_history_reader"
+name = "fortranMR"
 version = "0.1.0"
 license = "license"
 author = "jaiken17"
@@ -16,6 +16,6 @@ implicit-typing = false
 implicit-external = false
 source-form = "free"
 
-#dependencies]
-#fortranDF.git = "https://github.com/jaiken17/fortranDF"
+[dependencies]
+fortranDF = {path = "../fortranDF"}
 

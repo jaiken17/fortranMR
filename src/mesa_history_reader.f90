@@ -1,10 +1,12 @@
-module mesa_history_reader
+module fortranMR
+    use df_fortranDF
     implicit none
     private
-    
-    public :: say_hello
+  
+    type,extends(data_frame) :: mesa_history
+
+    end type mesa_history
+
+
 contains
-    subroutine say_hello
-        print *, "Hello, mesa_history_reader!"
-    end subroutine say_hello
-end module mesa_history_reader
+end module fortranMR

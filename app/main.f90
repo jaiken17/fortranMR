@@ -1,6 +1,7 @@
 program main
-  use mesa_history_reader, only: say_hello
-  implicit none
+    use fortranMR
+    implicit none
 
-  call say_hello()
+    print*, "Hello world!"
+
 end program main
