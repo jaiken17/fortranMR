@@ -21,10 +21,10 @@ module mr_fortranMR
 
 contains
 
-    subroutine read_history_file(this,filename,skip_info)
+    subroutine read_history_file(this,filename,read_info)
         class(mesa_history),intent(inout) :: this
         character(len=*),intent(in) :: filename
-        logical,intent(in),optional :: skip_info
+        logical,intent(in),optional :: read_info
 
         logical :: skip
         integer :: num_lines, num_cols, line_len, dtype, line_ind, header_ind, offset
@@ -40,8 +40,8 @@ contains
 
         header_ind = 6
 
-        if (present(skip_info)) then
-            skip = skip_info
+        if (present(read_info)) then
+            skip = read_info
         else
             skip = .false.
         end if
@@ -55,6 +55,10 @@ contains
         call get_num_lines(io_unit,num_lines)
 
         if (skip) then
+            print*, "no support for reading history info yet"
+            print*, "skipping to start of data"
+            call skip_to_line(io_unit,header_ind)
+        else
             call skip_to_line(io_unit,header_ind)
         end if
 
@@ -80,11 +84,11 @@ contains
         do i=1,num_cols
             dtype = what_type(split_line(i))
             select case (dtype)
-                case (REAL)
+                case (REAL_NUM)
                     call this%append_emptyr(num_lines-header_ind,trim(adjustl(headers(i))))
                     read(split_line(i),fmt=*) rval
                     call this%setr(i,1,rval)
-                case (INTEGER)
+                case (INTEGER_NUM)
                     call this%append_emptyi(num_lines-header_ind,trim(adjustl(headers(i))))
                     read(split_line(i),fmt=*) ival
                     call this%seti(i,1,ival)
@@ -105,10 +109,10 @@ contains
             split_line = split(line," ")
             do i=1,num_cols
                 select case (this%dtype(i))
-                case (REAL)
+                case (REAL_NUM)
                     read(split_line(i),fmt=*) rval
                     call this%setr(i,line_ind+offset,rval)
-                case (INTEGER)
+                case (INTEGER_NUM)
                     read(split_line(i),fmt=*) ival
                     call this%seti(i,line_ind+offset,ival)
                 case default
