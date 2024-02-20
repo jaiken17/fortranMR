@@ -1,5 +1,5 @@
 program main
-    use fortranMR
+    use mr_fortranMR
     implicit none
 
     print*, "Hello world!"

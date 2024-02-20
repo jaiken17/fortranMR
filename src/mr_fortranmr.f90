@@ -1,4 +1,4 @@
-module fortranMR
+module mr_fortranMR
     use df_fortranDF
     implicit none
     private
@@ -9,4 +9,4 @@ module fortranMR
 
 
 contains
-end module fortranMR
+end module mr_fortranMR
