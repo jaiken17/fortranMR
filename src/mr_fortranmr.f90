@@ -75,6 +75,9 @@ contains
 
 
         headers = split_line
+        call fix_duplicate_headers(headers) ! for binary evolutions, some columns are dupes
+
+
         read(unit=io_unit,fmt='(a)',iostat=io_err) line
         if (io_err /= 0) then
             err_msg = err_msg_io_read//" "//trim(adjustl(filename))
@@ -154,13 +157,42 @@ contains
         character(len=:),allocatable :: line
         character(len=:),dimension(:),allocatable :: line_split
 
-        call get_len_line(unit,line_len,line)
+        call get_len_line(unit,line_len,150,line)
         line_split = split(line)
         num_cols = size(line_split,dim=1)
 
         rewind(unit)
 
     end subroutine get_num_cols
+
+    subroutine fix_duplicate_headers(headers)
+        character(len=*),dimension(:),intent(inout) :: headers
+
+        character(len=:),allocatable :: new_header
+        character(len=:),dimension(:),allocatable :: tmp
+        integer :: i, j, headers_len, num_headers
+
+        headers_len = len(headers)
+        num_headers = size(headers,dim=1)
+
+        do i=2,num_headers
+            if (findloc(headers(1:i-1),headers(i),dim=1) > 0) then
+                new_header = trim(adjustl(headers(i)))//"_b"
+                if (len(new_header) > headers_len) then
+                    allocate(character(len(new_header)) :: tmp(num_headers))
+                    do j=1,num_headers
+                        tmp(j) = headers(j)
+                    end do
+                    tmp(i) = new_header
+                    headers = tmp
+                    deallocate(tmp)
+                else
+                    headers(i) = new_header
+                end if
+            end if
+        end do
+
+    end subroutine fix_duplicate_headers
 
 
 
