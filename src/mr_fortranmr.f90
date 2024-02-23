@@ -8,6 +8,10 @@ module mr_fortranMR
     private
 
     public mesa_history
+
+    character(len=17),parameter :: rfmt = "(1pes40.16e3, 1x)"
+    character(len=9),parameter :: ifmt = "(i40, 1x)"
+
   
     type,extends(data_frame) :: mesa_history
         private
@@ -104,26 +108,30 @@ contains
         offset = -header_ind
 
         do while(line_ind <= num_lines)
-            read(unit=io_unit,fmt='(a)',iostat=io_err) line
-            if (io_err /= 0) then
-                err_msg = err_msg_io_read//" "//trim(adjustl(filename))
-                error stop err_msg
-            end if
-            split_line = split(line," ")
             do i=1,num_cols
                 select case (this%dtype(i))
                 case (REAL_NUM)
-                    read(split_line(i),fmt=*) rval
+                    read(unit=io_unit,fmt=rfmt,iostat=io_err,advance='no') rval
+                    if (io_err /= 0) then
+                        err_msg = err_msg_io_read//" "//trim(adjustl(filename))
+                        error stop err_msg
+                    end if
                     call this%setr(i,line_ind+offset,rval)
                 case (INTEGER_NUM)
-                    read(split_line(i),fmt=*) ival
+                    read(unit=io_unit,fmt=ifmt,iostat=io_err,advance='no') ival
+                    if (io_err /= 0) then
+                        err_msg = err_msg_io_read//" "//trim(adjustl(filename))
+                        error stop err_msg
+                    end if
                     call this%seti(i,line_ind+offset,ival)
                 case default
                     ! only real and integers should appear in mesa history cols
                     error stop 'invalid type'
-            end select
+                end select
+                if (i==num_cols) read(unit=io_unit,fmt='(a)')
             end do
             line_ind = line_ind + 1
+            if (mod(line_ind,1000) == 0) print*, line_ind
         end do
 
         close(io_unit)
@@ -157,7 +165,7 @@ contains
         character(len=:),allocatable :: line
         character(len=:),dimension(:),allocatable :: line_split
 
-        call get_len_line(unit,line_len,150,line)
+        call get_len_line(unit,line_len,1000,line)
         line_split = split(line)
         num_cols = size(line_split,dim=1)
 
