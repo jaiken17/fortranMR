@@ -9,8 +9,7 @@ module mr_fortranMR
 
     public mesa_history
 
-    character(len=17),parameter :: rfmt = "(1pes40.16e3, 1x)"
-    character(len=9),parameter :: ifmt = "(i40, 1x)"
+    character(len=*),parameter :: rfmt = "(1pes40.16e3, 1x)", ifmt = "(i40, 1x)"
 
   
     type,extends(data_frame) :: mesa_history
