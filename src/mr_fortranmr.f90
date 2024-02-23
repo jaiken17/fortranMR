@@ -130,7 +130,6 @@ contains
                 if (i==num_cols) read(unit=io_unit,fmt='(a)')
             end do
             line_ind = line_ind + 1
-            if (mod(line_ind,1000) == 0) print*, line_ind
         end do
 
         close(io_unit)
