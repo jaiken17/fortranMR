@@ -1,13 +1,13 @@
 module mr_fortranMR
-    use df_precision
+    use df_precision, only: rk, ik
     use df_types
-    use df_utils
-    use split_mod
-    use df_fortranDF
+    use df_utils, only: what_type, get_num_lines, get_len_line, err_msg_io_read
+    use split_mod, only: split
+    use df_fortranDF, only: data_frame
     implicit none
     private
 
-    public mesa_history
+    public :: mesa_history
 
     character(len=*),parameter :: rfmt = "(1pes40.16e3, 1x)", ifmt = "(i40, 1x)"
 
@@ -140,8 +140,7 @@ contains
         integer,intent(in) :: io_unit, line_num
         integer,intent(in),optional :: current_line_num
  
-        character(len=1) :: null
-        integer :: io_err, num_skips, i
+        integer :: num_skips, i
 
         if (present(current_line_num)) then
             num_skips = line_num - current_line_num
